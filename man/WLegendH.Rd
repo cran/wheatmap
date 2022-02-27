@@ -4,8 +4,18 @@
 \alias{WLegendH}
 \title{WLegendH}
 \usage{
-WLegendH(x = NULL, dm = NULL, name = "", n.stops = 20, n.text = 5,
-  label.fontsize = 12, width = 0.02, height = 0.05, ...)
+WLegendH(
+  x = NULL,
+  dm = NULL,
+  name = "",
+  n.stops = 20,
+  n.text = 5,
+  label.fontsize = 12,
+  width = 0.02,
+  height = 0.05,
+  decreasing = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{a name or a plotting object, if NULL use the last plotting object}
@@ -23,6 +33,8 @@ WLegendH(x = NULL, dm = NULL, name = "", n.stops = 20, n.text = 5,
 \item{width}{width of each unit in plotted legend}
 
 \item{height}{height of each unit in plotted legend}
+
+\item{decreasing}{reversed color map}
 
 \item{...}{additional options to WHeatmap}
 }

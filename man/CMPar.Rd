@@ -4,10 +4,21 @@
 \alias{CMPar}
 \title{Color Map Parameters}
 \usage{
-CMPar(dmin = NULL, dmax = NULL, brewer.name = NULL, brewer.n = 3,
-  colorspace.name = NULL, colorspace.n = 2, cmap = NULL,
-  label2color = NULL, use.data = FALSE, stop.points = NULL,
-  grey.scale = FALSE)
+CMPar(
+  dmin = NULL,
+  dmax = NULL,
+  brewer.name = NULL,
+  brewer.n = 3,
+  colorspace.name = NULL,
+  colorspace.n = 2,
+  cmap = NULL,
+  label2color = NULL,
+  use.data = FALSE,
+  stop.points = NULL,
+  na.color = "#C0C0C0",
+  rev = FALSE,
+  grey.scale = FALSE
+)
 }
 \arguments{
 \item{dmin}{minimum for continuous color map}
@@ -31,6 +42,10 @@ explicitly for discrete color mapping}
 or hexdecimal color names}
 
 \item{stop.points}{custome stop points}
+
+\item{na.color}{color for NA}
+
+\item{rev}{reverse stop points}
 
 \item{grey.scale}{whether to use grey scale}
 }

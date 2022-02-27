@@ -14,14 +14,20 @@
 #' @param xticklabel.fontsize xticklabel font size
 #' @param xticklabel.pad padding between xticklabel and x-axis
 #' @param xticklabel.rotat xticklabel rotation
+#' @param xticklabel.space xticklabel space
+#' @param xticklabel.use.data use data to label x-axis (most likely used by colorbar)
 #' @param yticklabels to plot ytick labels, one may supply characters to plot just a subset of ytick labels
 #' @param yticklabels.n number of ytick labels to plot (resample for aethetics by default)
 #' @param yticklabel.side yticklabel side (l or r)
 #' @param yticklabel.fontsize yticklabel font size
 #' @param yticklabel.pad padding between yticklabel and y-axis
 #' @param yticklabel.rotat yticklabel rotation
+#' @param yticklabel.space yticklabel space
+#' @param yticklabel.use.data use data to label y-axis (most likely used by colorbar)
 #' @param gp a list of graphical parameters
 #' @param sub.name subclass name
+#' @param bbox whether to plot the boundary box (useful with white matrix elements)
+#'
 #' @return one or a list of heatmaps (depends on whether dimension is split)
 #' @examples
 #' WHeatmap(matrix(1:10, nrow=2), cmp=CMPar(brewer.name='Greens'))
@@ -48,8 +54,7 @@
 #' @export
 WHeatmap <- function(
     data=NULL, dm=NULL, name='', continuous=NULL,
-    cmp = CMPar(), # colormapping parameters
-    cm = NULL,
+    cmp = NULL, cm = NULL,
 
     ## tick label on x-axis
     xticklabels = NULL,
@@ -58,6 +63,8 @@ WHeatmap <- function(
     xticklabel.fontsize = 12,
     xticklabel.rotat = 90,
     xticklabel.pad = 0.005,
+    xticklabel.space = 0.05,
+    xticklabel.use.data = FALSE,
 
     ## tick label on y-axis
     yticklabels = NULL,
@@ -66,9 +73,12 @@ WHeatmap <- function(
     yticklabel.fontsize = 12,
     yticklabel.rotat = 0,
     yticklabel.pad = 0.005,
+    yticklabel.space = 0.05,
+    yticklabel.use.data = FALSE,
 
     ## subclass name
     sub.name = NULL,
+    bbox = FALSE,
 
     ## graph parameters
     gp = NULL) {
@@ -101,10 +111,15 @@ WHeatmap <- function(
     }
 
     ## graph parameters
-    hm$gp <- list()
-    hm$gp$col <- 'white'
-    hm$gp$lty <- 'blank'
+    if (is.null(gp)) {
+        hm$gp <- list(col = "white", lty = "blank")
+    } else {
+        hm$gp <- list()
+    }
     lapply(names(gp), function(x) {hm$gp[[x]] <<- gp[[x]]})
+
+    if (is.null(hm$cmp))                # colormapping parameters
+        hm$cmp = CMPar()
 
     ## map to colors
     if (hm$continuous)
@@ -283,18 +298,26 @@ print.WHeatmap <- function(x, cex=1, layout.only=FALSE, stand.alone=TRUE, ...) {
     xc = (seq_len(nc)-1)/nc
     yc = (rev(seq_len(nr))-1)/nr
     expand.index <- expand.grid(seq_len(nr), seq_len(nc))
-    grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]],
-              width=unit(1/nc, 'npc'), height=unit(1/nr, 'npc'),
-              gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
+    grid.rect(xc[expand.index[[2]]], yc[expand.index[[1]]], width=unit(1/nc, 'npc'),
+        height=unit(1/nr, 'npc'),
+        gp=do.call('gpar', c(list(fill=x$cm$colors), x$gp)), just=c('left','bottom'))
+
+    if (x[["bbox"]]) {
+        grid.rect(
+            min(xc), min(yc),
+            width = unit(max(xc)+1/nc-min(xc),"npc"),
+            height = unit(max(yc)+1/nr-min(yc),"npc"),
+            just = c("left","bottom"))
+    }
 
     ## x tick labels
-    if (!is.null(x[['xticklabels']])) {
-        .WPrintXTickLabels(x, x[['xticklabels']], cex=max(cex))
+    if (!is.null(x[['xticklabels']]) || x[['xticklabel.use.data']]) {
+        .WPrintXTickLabels(x, x[['xticklabels']], use.data=x[['xticklabel.use.data']], cex=max(cex))
     }
 
     ## y tick labels
-    if (!is.null(x[['yticklabels']])) {
-        .WPrintYTickLabels(x, x[['yticklabels']], cex=max(cex))
+    if (!is.null(x[['yticklabels']]) || x[['yticklabel.use.data']]) {
+        .WPrintYTickLabels(x, x[['yticklabels']], use.data=x[['yticklabel.use.data']], cex=max(cex))
     }
 
     upViewport()

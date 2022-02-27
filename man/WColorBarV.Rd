@@ -4,8 +4,16 @@
 \alias{WColorBarV}
 \title{WColorBarV}
 \usage{
-WColorBarV(data, ..., label = NULL, label.side = "t", label.fontsize = 12,
-  label.pad = 0.005)
+WColorBarV(
+  data,
+  ...,
+  label = NULL,
+  label.side = "t",
+  label.fontsize = 12,
+  label.pad = 0.005,
+  label.space = 0.05,
+  label.use.data = FALSE
+)
 }
 \arguments{
 \item{data}{numeric vector}
@@ -19,6 +27,10 @@ WColorBarV(data, ..., label = NULL, label.side = "t", label.fontsize = 12,
 \item{label.fontsize}{label font size}
 
 \item{label.pad}{label padding}
+
+\item{label.space}{when label.use.data, the space between labels}
+
+\item{label.use.data}{use data to show legend in situ}
 }
 \value{
 an object of class WColorBarV

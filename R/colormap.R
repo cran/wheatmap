@@ -21,6 +21,8 @@
 #' @param colorspace.n number of stops in colorspace palettes
 #' @param cmap customized colormap name
 #' @param stop.points custome stop points
+#' @param na.color color for NA
+#' @param rev reverse stop points
 #' @param grey.scale whether to use grey scale
 #' @return an object of class CMPar
 #' @examples
@@ -33,6 +35,8 @@ CMPar <- function(
     colorspace.name=NULL, colorspace.n=2,
     cmap=NULL, label2color=NULL, use.data=FALSE,
     stop.points=NULL, # color names at stop points
+    na.color = '#C0C0C0',
+    rev = FALSE,
     grey.scale=FALSE) {
     
     cmp <- lapply(formals(), eval)
@@ -106,6 +110,8 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
             if (cmp$brewer.n < 3)
                 cmp$brewer.n <- 3
             cmp$stop.points <- brewer.pal(cmp$brewer.n, cmp$brewer.name)
+            if (cmp$rev)
+                cmp$stop.points <- rev(cmp$stop.points)
         } else {
             ## colorspace.name can be
             ## diverge_hcl, diverge_hsv, terrain_hcl, heat_hcl, sequential_hcl and rainbow_hcl
@@ -132,7 +138,7 @@ MapToContinuousColors <- function(data, cmp=CMPar(), given.cm=NULL) {
         mapper = colorRamp(cmp$stop.points, alpha=TRUE))
     cm$colors = apply(cm$mapper(data), 1, function(x) {
         if (any(is.na(x)))
-            x <- col2rgb('#C0C0C0', alpha=TRUE)
+            x <- col2rgb(cmp$na.color, alpha=TRUE)
         do.call(rgb, c(as.list(x), maxColorValue=255))
     })
     cm
@@ -190,6 +196,8 @@ MapToDiscreteColors <- function(data, cmp=CMPar(), given.cm=NULL) {
     cm <- ColorMap(
         continuous=FALSE,
         mapper=setNames(mapped.colors, alphabet))
+    
     cm$colors=cm$mapper[as.character(data)]
+    cm$colors[is.na(data)] = cmp$na.color
     cm
 }
